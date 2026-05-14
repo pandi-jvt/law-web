@@ -1,0 +1,63 @@
+{
+  "name": "law-web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "proxy": "http://localhost:9000",
+  "dependencies": {
+    "@ant-design/colors": "7.2.1",
+    "@ant-design/icons": "6.1.0",
+    "@emotion/cache": "11.14.0",
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@fontsource/public-sans": "5.2.7",
+    "@mui/base": "5.0.0-beta.70",
+    "@mui/lab": "7.0.1-beta.18",
+    "@mui/material": "7.3.4",
+    "@mui/system": "7.3.3",
+    "@mui/x-charts": "8.14.0",
+    "ajv": "^8.12.0",
+    "axios": "^1.6.2",
+    "formik": "2.4.6",
+    "framer-motion": "12.23.24",
+    "lodash-es": "4.17.21",
+    "react": "^18.2.0",
+    "react-device-detect": "2.2.3",
+    "react-dom": "^18.2.0",
+    "react-number-format": "5.4.4",
+    "react-query": "^3.39.3",
+    "react-refresh": "^0.14.0",
+    "react-router-dom": "^6.20.0",
+    "react-scripts": "5.0.1",
+    "simplebar-react": "3.3.2",
+    "swr": "^2.4.0",
+    "web-vitals": "^3.5.0",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "4.9.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
