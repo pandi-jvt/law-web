@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -26,6 +25,7 @@ import TeamOutlined from '@ant-design/icons/TeamOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import { useAuth } from 'contexts/AuthContext';
 import { apiService } from 'services/api';
+import { extractTenDigitMobile, INDIA_COUNTRY_CODE, isValidIndianMobile10 } from 'utils/phone';
 import { User } from 'types';
 
 const formatLabel = (value?: string | null) => {
@@ -82,8 +82,8 @@ const validateProfileForm = (form: typeof initialProfileForm) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
     return 'Enter a valid email address.';
   }
-  if (form.phoneNumber.trim() && (form.phoneNumber.trim().length < 10 || form.phoneNumber.trim().length > 20)) {
-    return 'Phone number must be between 10 and 20 characters.';
+  if (form.phoneNumber.trim() && !isValidIndianMobile10(form.phoneNumber)) {
+    return 'Phone number must be exactly 10 digits.';
   }
   return '';
 };
@@ -193,7 +193,7 @@ export const UserProfile: React.FC = () => {
       fullName: getFullName(currentUser),
       username: currentUser?.username ?? '',
       email: currentUser?.email ?? '',
-      phoneNumber: currentUser?.phoneNumber ?? currentUser?.phone_number ?? ''
+      phoneNumber: extractTenDigitMobile(currentUser?.phoneNumber ?? currentUser?.phone_number ?? '')
     });
     setProfileFormError('');
     setSuccessMessage('');
@@ -452,12 +452,21 @@ export const UserProfile: React.FC = () => {
             />
             <TextField
               label="Phone number"
+              type="tel"
               value={profileForm.phoneNumber}
-              onChange={(event) => setProfileForm((current) => ({ ...current, phoneNumber: event.target.value }))}
+              onChange={(event) =>
+                setProfileForm((current) => ({
+                  ...current,
+                  phoneNumber: extractTenDigitMobile(event.target.value)
+                }))
+              }
               fullWidth
-              inputProps={{ minLength: 10, maxLength: 20 }}
+              InputProps={{
+                startAdornment: <Typography sx={{ mr: 1, color: 'text.secondary' }}>{INDIA_COUNTRY_CODE}</Typography>
+              }}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 10 }}
+              helperText="Optional. Enter 10 digit mobile number (without country code)."
             />
-            <FormHelperText>Phone number is optional. If provided, use 10 to 20 characters.</FormHelperText>
           </Stack>
 
           <Divider />

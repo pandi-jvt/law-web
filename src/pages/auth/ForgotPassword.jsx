@@ -22,6 +22,7 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import IconButton from 'components/@extended/IconButton';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import { apiService } from 'services/api';
+import { extractTenDigitMobile, INDIA_COUNTRY_CODE } from 'utils/phone';
 
 // assets
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
@@ -37,11 +38,15 @@ export default function ForgotPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const requestSchema = Yup.object().shape({
-    phoneNumber: Yup.string().min(10, 'Phone number must be at least 10 characters').max(20).required('Phone number is required')
+    phoneNumber: Yup.string()
+      .required('Phone number is required')
+      .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
   });
 
   const resetSchema = Yup.object().shape({
-    phoneNumber: Yup.string().min(10, 'Phone number must be at least 10 characters').max(20).required('Phone number is required'),
+    phoneNumber: Yup.string()
+      .required('Phone number is required')
+      .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
     otp: Yup.string().matches(/^\d{6}$/, 'Enter the 6 digit OTP').required('OTP is required'),
     newPassword: Yup.string()
       .required('New password is required')
@@ -117,9 +122,18 @@ export default function ForgotPassword() {
                         name="phoneNumber"
                         value={values.phoneNumber}
                         onBlur={handleBlur}
-                        onChange={handleChange}
-                        placeholder="+15551234567"
+                        onChange={(event) => {
+                          handleChange({
+                            target: {
+                              name: 'phoneNumber',
+                              value: extractTenDigitMobile(event.target.value)
+                            }
+                          });
+                        }}
+                        placeholder="9876543210"
                         fullWidth
+                        startAdornment={<InputAdornment position="start">{INDIA_COUNTRY_CODE}</InputAdornment>}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 10 }}
                         error={Boolean(touched.phoneNumber && errors.phoneNumber)}
                         disabled={otpSent || isSubmitting}
                       />

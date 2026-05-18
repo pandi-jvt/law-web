@@ -27,6 +27,7 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import { AccountType } from 'types';
 
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
+import { extractTenDigitMobile, INDIA_COUNTRY_CODE } from 'utils/phone';
 
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
@@ -221,12 +222,13 @@ export default function AuthRegister() {
                     name="phoneNumber"
                     onBlur={handleBlur}
                     onChange={(event) => {
-                      const digitsOnly = event.target.value.replace(/\D/g, '').slice(0, 10);
+                      const digitsOnly = extractTenDigitMobile(event.target.value);
                       setFieldValue('phoneNumber', digitsOnly);
                       setFieldTouched('phoneNumber', true, false);
                     }}
                     placeholder="9876543210"
                     autoComplete="tel"
+                    startAdornment={<InputAdornment position="start">{INDIA_COUNTRY_CODE}</InputAdornment>}
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 10 }}
                   />
                 </Stack>

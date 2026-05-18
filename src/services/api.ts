@@ -3,6 +3,7 @@
  * Handles authentication, request/response interceptors, and API calls.
  */
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { formatIndianPhoneForApi } from '../utils/phone';
 import {
   User,
   Client,
@@ -238,7 +239,7 @@ class ApiService {
       username: data.username,
       full_name: data.full_name,
       password: data.password,
-      ...(data.phone_number ? { phone_number: data.phone_number } : {}),
+      ...(data.phone_number ? { phone_number: formatIndianPhoneForApi(data.phone_number) } : {}),
     };
     const response = await this.api.post<User>('/api/auth/register', payload);
     return response.data;
@@ -259,14 +260,16 @@ class ApiService {
   }
 
   async forgotPassword(phoneNumber: string): Promise<void> {
-    await this.api.post('/api/auth/forgot-password', { phoneNumber });
+    await this.api.post('/api/auth/forgot-password', {
+      phone_number: formatIndianPhoneForApi(phoneNumber),
+    });
   }
 
   async resetPassword(phoneNumber: string, otp: string, newPassword: string): Promise<void> {
     await this.api.post('/api/auth/reset-password', {
-      phoneNumber,
+      phone_number: formatIndianPhoneForApi(phoneNumber),
       otp,
-      newPassword,
+      new_password: newPassword,
     });
   }
 
@@ -278,7 +281,13 @@ class ApiService {
   }
 
   async updateProfile(data: UpdateProfilePayload): Promise<User> {
-    const response = await this.api.put<User>('/api/users/me', data);
+    const payload = {
+      ...data,
+      ...(data.phone_number?.trim()
+        ? { phone_number: formatIndianPhoneForApi(data.phone_number) }
+        : {}),
+    };
+    const response = await this.api.put<User>('/api/users/me', payload);
     return response.data;
   }
 
@@ -288,7 +297,13 @@ class ApiService {
   }
 
   async createAccountUser(data: CreateAccountUserPayload): Promise<CreateAccountUserResponse> {
-    const response = await this.api.post<CreateAccountUserResponse>('/api/users', data);
+    const payload = {
+      ...data,
+      ...(data.phone_number?.trim()
+        ? { phone_number: formatIndianPhoneForApi(data.phone_number) }
+        : {}),
+    };
+    const response = await this.api.post<CreateAccountUserResponse>('/api/users', payload);
     return response.data;
   }
 

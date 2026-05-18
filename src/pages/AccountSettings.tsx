@@ -28,6 +28,7 @@ import { useAuth } from 'contexts/AuthContext';
 import { apiService } from 'services/api';
 import { GroupRole, User, UserPageResult } from 'types';
 import { isGroupAdmin } from 'utils/permissions';
+import { extractTenDigitMobile, INDIA_COUNTRY_CODE, isValidIndianMobile10 } from 'utils/phone';
 
 const initialUserForm = {
   fullName: '',
@@ -53,8 +54,6 @@ type UserSortCol = 'full_name' | 'email' | 'username' | 'created_at';
 
 const pageTotal = (p: UserPageResult) => p.total_elements ?? p.totalElements ?? 0;
 
-const PHONE_REGEX = /^\d{10}$/;
-
 const validateForm = (form: UserForm) => {
   if (!form.fullName.trim()) {
     return 'Full name is required.';
@@ -62,7 +61,7 @@ const validateForm = (form: UserForm) => {
   if (!validateEmail(form.email.trim())) {
     return 'Enter a valid email address.';
   }
-  if (!PHONE_REGEX.test(form.phoneNumber.trim())) {
+  if (!isValidIndianMobile10(form.phoneNumber)) {
     return 'Phone number must be exactly 10 digits.';
   }
   if (!form.groupRole) {
@@ -149,7 +148,7 @@ export const AccountSettings: React.FC = () => {
   // Real-time phone error: only surface once the user has typed something so the
   // field doesn't show red the instant the drawer opens.
   const phoneError =
-    userForm.phoneNumber.length > 0 && !PHONE_REGEX.test(userForm.phoneNumber)
+    userForm.phoneNumber.length > 0 && !isValidIndianMobile10(userForm.phoneNumber)
       ? 'Phone number must be exactly 10 digits.'
       : '';
 
@@ -337,12 +336,15 @@ export const AccountSettings: React.FC = () => {
               type="tel"
               value={userForm.phoneNumber}
               onChange={(event) =>
-                handleFormChange('phoneNumber', event.target.value.replace(/\D/g, '').slice(0, 10))
+                handleFormChange('phoneNumber', extractTenDigitMobile(event.target.value))
               }
               required
               fullWidth
               error={Boolean(phoneError)}
-              helperText={phoneError || 'Enter 10 digit phone number.'}
+              helperText={phoneError || 'Enter 10 digit mobile number (without country code).'}
+              InputProps={{
+                startAdornment: <Typography sx={{ mr: 1, color: 'text.secondary' }}>{INDIA_COUNTRY_CODE}</Typography>
+              }}
               inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 10 }}
             />
             <FormControl fullWidth required>
