@@ -205,7 +205,7 @@ export const Cases: React.FC = () => {
     };
 
     const handleDelete = async (id: number | string) => {
-      if (!window.confirm('Are you sure you want to delete this case ?')) {
+      if (!window.confirm('Are you sure you want to delete this case?')) {
         return;
       }
   
