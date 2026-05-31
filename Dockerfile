@@ -1,7 +1,7 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-ARG REACT_APP_API_BASE_URL=http://localhost:9000
+ARG REACT_APP_API_BASE_URL=https://law-server-fafn.onrender.com/
 ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 COPY package*.json ./
